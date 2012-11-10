@@ -1,0 +1,7 @@
+dkms-fcdsl2-dont-redefine-uintptr_t.patch
+dkms-fcdsl2-remove-DECLARE_MUTEX_LOCKED.patch
+dkms-fcdsl2-update-device_interrupt-definition.patch
+dkms-fcdsl2-update-irq-flags.patch
+dkms-fcdsl2-use-autoconf-header.patch
+dkms-fcdsl2-use-pci_register_driver.patch
+fcdsl2-suse93-3.11-07.tar.bz2

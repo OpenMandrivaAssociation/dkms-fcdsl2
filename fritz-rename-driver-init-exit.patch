@@ -1,0 +1,75 @@
+Rename driver_init to fcdsl2_driver_init, as it clashes with driver_init
+defined in <linux/driver.h> header since 2.6.20. While at it renamed
+driver_exit to fcdsl2_driver_exit, not really needed but did it as a
+cosmetic thing and to avoid the same problem in the future like the
+driver_init case.
+
+Signed-off-by: Herton Ronaldo Krzesinski <herton@mandriva.com>
+
+--- fritz/src.orig/driver.c	2008-01-04 16:57:18.000000000 -0200
++++ fritz/src/driver.c	2008-01-05 00:06:06.000000000 -0200
+@@ -1563,19 +1563,19 @@ void __stack init (unsigned len, void (_
+ 
+ /*---------------------------------------------------------------------------*\
+ \*---------------------------------------------------------------------------*/
+-int driver_init (void) {
++int fcdsl2_driver_init (void) {
+ 
+ 	return (NULL != (capi_lib = link_library (&capi_card)));
+-} /* driver_init */
++} /* fcdsl2_driver_init */
+ 
+ /*---------------------------------------------------------------------------*\
+ \*---------------------------------------------------------------------------*/
+-void driver_exit (void) {
++void fcdsl2_driver_exit (void) {
+ 
+ 	assert (capi_lib);
+ 	free_library ();
+ 	capi_lib = NULL;
+-} /* driver_exit */
++} /* fcdsl2_driver_exit */
+ 
+ /*---------------------------------------------------------------------------*\
+ \*---------------------------------------------------------------------------*/
+--- fritz/src.orig/driver.h	2008-01-04 17:03:41.000000000 -0200
++++ fritz/src/driver.h	2008-01-05 00:06:43.000000000 -0200
+@@ -161,8 +161,8 @@ extern void init (unsigned, void (__attr
+ 
+ /*---------------------------------------------------------------------------*\
+ \*---------------------------------------------------------------------------*/
+-extern int driver_init (void);
+-extern void driver_exit (void);
++extern int fcdsl2_driver_init(void);
++extern void fcdsl2_driver_exit (void);
+ 
+ #endif
+ 
+--- fritz/src.orig/main.c	2008-01-04 17:00:13.000000000 -0200
++++ fritz/src/main.c	2008-01-05 00:07:08.000000000 -0200
+@@ -116,14 +116,14 @@ static int __devinit fcdsl2_probe (
+ 		return -ENODEV;
+ 	}
+ 	NOTE("Loading...\n");
+-	if (!driver_init ()) {
++	if (!fcdsl2_driver_init ()) {
+ 		ERROR("Error: Driver library not available.\n");
+ 		NOTE("Not loaded.\n");
+ 		return -ENOSYS;
+ 	}
+ 	if (0 != (res = add_card (dev))) {
+ 		NOTE("Not loaded.\n");
+-		driver_exit ();
++		fcdsl2_driver_exit ();
+ 		return res;
+ 	}
+ 	NOTE("Loaded.\n");
+@@ -144,7 +144,7 @@ static void __devexit fcdsl2_remove (str
+ 	NOTE("Removing...\n");
+ 	remove_ctrls (cp);
+ 	NOTE("Removed.\n");
+-	driver_exit ();
++	fcdsl2_driver_exit ();
+ #ifndef NDEBUG
+ 	if (hallocated() != 0) {
+ 		ERROR("%u bytes leaked.\n", hallocated());
